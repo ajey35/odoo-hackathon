@@ -65,32 +65,32 @@ export function TasksOverview() {
     if (searchQuery) {
       filtered = filtered.filter(
         (task) =>
-          task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          task.project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          task.description?.toLowerCase().includes(searchQuery.toLowerCase()),
+          task?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task?.project?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task?.description?.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     }
 
     // Apply status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter((task) => task.status === statusFilter)
+      filtered = filtered.filter((task) => task?.status === statusFilter)
     }
 
     // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "dueDate":
-          if (!a.dueDate && !b.dueDate) return 0
-          if (!a.dueDate) return 1
+          if (!a?.dueDate && !b?.dueDate) return 0
+          if (!a?.dueDate) return 1
           if (!b.dueDate) return -1
-          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+          return new Date(a?.dueDate).getTime() - new Date(b?.dueDate).getTime()
         case "status":
           const statusOrder = { TODO: 0, IN_PROGRESS: 1, DONE: 2 }
-          return statusOrder[a.status] - statusOrder[b.status]
+          return statusOrder[a?.status] - statusOrder[b?.status]
         case "project":
-          return a.project.name.localeCompare(b.project.name)
+          return a?.project?.name.localeCompare(b?.project?.name)
         case "created":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          return new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
         default:
           return 0
       }
@@ -151,10 +151,10 @@ export function TasksOverview() {
 
   const getTaskStats = () => {
     const total = tasks?.length
-    const todo = tasks?.filter((t) => t.status === "TODO").length
-    const inProgress = tasks?.filter((t) => t.status === "IN_PROGRESS").length
-    const done = tasks?.filter((t) => t.status === "DONE").length
-    const overdue = tasks?.filter((t) => t.dueDate && new Date(t.dueDate) < new Date()).length
+    const todo = tasks?.filter((t) => t?.status === "TODO").length
+    const inProgress = tasks?.filter((t) => t?.status === "IN_PROGRESS").length
+    const done = tasks?.filter((t) => t?.status === "DONE").length
+    const overdue = tasks?.filter((t) => t?.dueDate && new Date(t?.dueDate) < new Date()).length
 
     return { total, todo, inProgress, done, overdue }
   }
@@ -206,7 +206,7 @@ export function TasksOverview() {
       </div>
 
       {/* Stats Cards */}
-      <div className="w-full grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5">
+      <div className="w-full grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 full-width-grid">
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
           <CardHeader className="pb-2">
             <CardDescription className="text-blue-600 dark:text-blue-400 font-medium">Total Tasks</CardDescription>
@@ -233,7 +233,7 @@ export function TasksOverview() {
         </Card>
         <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 border-green-200 dark:border-green-800">
           <CardHeader className="pb-2">
-            <CardDescription className="text-green-600 dark:text-gree n-400 font-medium">Completed</CardDescription>
+            <CardDescription className="text-green-600 dark:text-green-400 font-medium">Completed</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.done}</div>

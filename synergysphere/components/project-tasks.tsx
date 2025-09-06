@@ -40,7 +40,7 @@ export function ProjectTasks({ projectId, canManage }: ProjectTasksProps) {
   const loadTasks = async () => {
     try {
       const response = await tasksAPI.getTasks({ projectId })
-      setTasks(response.data.tasks)
+      setTasks(response.data?.tasks || [])
     } catch (error) {
       console.error("Failed to load tasks:", error)
     } finally {
@@ -83,16 +83,16 @@ export function ProjectTasks({ projectId, canManage }: ProjectTasksProps) {
 
   const getInitials = (name: string) => {
     return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
+      ?.split(" ")
+      ?.map((n) => n?.[0])
+      ?.join("")
+      ?.toUpperCase() || ''
   }
 
   const groupedTasks = {
-    TODO: tasks.filter((t) => t.status === "TODO"),
-    IN_PROGRESS: tasks.filter((t) => t.status === "IN_PROGRESS"),
-    DONE: tasks.filter((t) => t.status === "DONE"),
+    TODO: tasks?.filter((t) => t?.status === "TODO") || [],
+    IN_PROGRESS: tasks?.filter((t) => t?.status === "IN_PROGRESS") || [],
+    DONE: tasks?.filter((t) => t?.status === "DONE") || [],
   }
 
   if (loading) {
@@ -133,7 +133,7 @@ export function ProjectTasks({ projectId, canManage }: ProjectTasksProps) {
         )}
       </div>
 
-      {tasks.length === 0 ? (
+      {tasks?.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
             <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
@@ -162,34 +162,34 @@ export function ProjectTasks({ projectId, canManage }: ProjectTasksProps) {
                   {getStatusIcon(status)}
                   <span className="capitalize">{status.replace("_", " ").toLowerCase()}</span>
                   <Badge variant="secondary" className="ml-auto">
-                    {statusTasks.length}
+                    {statusTasks?.length}
                   </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {statusTasks.map((task) => (
+              <CardContent className="space-y-3">   
+                {statusTasks?.map((task) => (
                   <Card key={task.id} className="p-3 hover:shadow-sm transition-shadow cursor-pointer">
                     <div className="space-y-2">
                       <div className="flex items-start justify-between">
-                        <h4 className="font-medium text-sm text-foreground line-clamp-2">{task.title}</h4>
-                        <Badge variant={getStatusColor(task.status) as any} className="text-xs ml-2 flex-shrink-0">
-                          {task.status.replace("_", " ")}
+                        <h4 className="font-medium text-sm text-foreground line-clamp-2">{task?.title}</h4>
+                        <Badge variant={getStatusColor(task?.status) as any} className="text-xs ml-2 flex-shrink-0">
+                          {task?.status?.replace("_", " ")}
                         </Badge>
                       </div>
 
-                      {task.description && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">{task.description}</p>
+                      {task?.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{task?.description}</p>
                       )}
 
                       <div className="flex items-center justify-between text-xs">
-                        {task.assignee ? (
+                        {task?.assignee ? (
                           <div className="flex items-center space-x-1">
                             <Avatar className="h-5 w-5">
                               <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                                {getInitials(task.assignee.name)}
+                                {getInitials(task?.assignee?.name || '')}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-muted-foreground">{task.assignee.name}</span>
+                            <span className="text-muted-foreground">{task?.assignee?.name}</span>
                           </div>
                         ) : (
                           <div className="flex items-center space-x-1 text-muted-foreground">
@@ -198,10 +198,10 @@ export function ProjectTasks({ projectId, canManage }: ProjectTasksProps) {
                           </div>
                         )}
 
-                        {task.dueDate && (
+                        {task?.dueDate && (
                           <div className="flex items-center space-x-1 text-muted-foreground">
                             <Calendar className="h-3 w-3" />
-                            <span>{formatDate(task.dueDate)}</span>
+                            <span>{formatDate(task?.dueDate)}</span>
                           </div>
                         )}
                       </div>
