@@ -131,95 +131,181 @@ export function ProjectTasks({ projectId, canManage }: ProjectTasksProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-foreground">Tasks</h2>
-        {canManage && (
-          <Button onClick={() => setCreateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Task
-          </Button>
-        )}
+    <div className="w-full space-y-8">
+      {/* Header Section */}
+      <div className="w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className="text-3xl font-bold text-foreground">Tasks</h2>
+            <p className="text-muted-foreground">Organize and track project tasks</p>
+          </div>
+          {canManage && (
+            <Button 
+              onClick={() => setCreateDialogOpen(true)} 
+              className="w-full sm:w-auto h-12 text-base bg-primary hover:bg-primary/90"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              New Task
+            </Button>
+          )}
+        </div>
       </div>
 
+      {/* Tasks Kanban Board */}
       {tasks?.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="h-12 w-12 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">No tasks yet</h3>
-            <p className="text-muted-foreground mb-4">
-              {canManage
-                ? "Create your first task to start organizing work."
-                : "No tasks have been created for this project yet."}
-            </p>
-            {canManage && (
-              <Button onClick={() => setCreateDialogOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Task
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+        <div className="w-full bg-card/50 backdrop-blur-sm rounded-xl border p-16 text-center">
+          <div className="mx-auto w-32 h-32 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-6">
+            <CheckCircle className="h-16 w-16 text-primary" />
+          </div>
+          <h3 className="text-2xl font-semibold text-foreground mb-4">No tasks yet</h3>
+          <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
+            {canManage
+              ? "Create your first task to start organizing work and collaborating with your team."
+              : "No tasks have been created for this project yet."}
+          </p>
+          {canManage && (
+            <Button 
+              onClick={() => setCreateDialogOpen(true)} 
+              size="lg" 
+              className="h-12 text-base bg-primary hover:bg-primary/90"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Create Your First Task
+            </Button>
+          )}
+        </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-3">
-          {Object.entries(groupedTasks).map(([status, statusTasks]) => (
-            <Card key={status}>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  {getStatusIcon(status)}
-                  <span className="capitalize">{status.replace("_", " ").toLowerCase()}</span>
-                  <Badge variant="secondary" className="ml-auto">
-                    {statusTasks?.length}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">   
-                {statusTasks?.map((task) => (
-                  <Card key={task.id} className="p-3 hover:shadow-sm transition-shadow cursor-pointer">
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between">
-                        <h4 className="font-medium text-sm text-foreground line-clamp-2">{task?.title}</h4>
-                        <Badge variant={getStatusColor(task?.status) as any} className="text-xs ml-2 flex-shrink-0">
-                          {task?.status?.replace("_", " ")}
-                        </Badge>
+        <div className="w-full grid gap-6 grid-cols-1 lg:grid-cols-3 full-width-grid">
+          {Object.entries(groupedTasks).map(([status, statusTasks]) => {
+            const statusConfig = {
+              TODO: { 
+                title: "To Do", 
+                icon: <Clock className="h-5 w-5" />, 
+                color: "text-gray-600 dark:text-gray-400",
+                bgColor: "bg-gray-50 dark:bg-gray-900/50",
+                borderColor: "border-gray-200 dark:border-gray-800"
+              },
+              IN_PROGRESS: { 
+                title: "In Progress", 
+                icon: <AlertCircle className="h-5 w-5" />, 
+                color: "text-yellow-600 dark:text-yellow-400",
+                bgColor: "bg-yellow-50 dark:bg-yellow-900/50",
+                borderColor: "border-yellow-200 dark:border-yellow-800"
+              },
+              DONE: { 
+                title: "Done", 
+                icon: <CheckCircle className="h-5 w-5" />, 
+                color: "text-green-600 dark:text-green-400",
+                bgColor: "bg-green-50 dark:bg-green-900/50",
+                borderColor: "border-green-200 dark:border-green-800"
+              }
+            }
+            
+            const config = statusConfig[status as keyof typeof statusConfig]
+            
+            return (
+              <div key={status} className="space-y-4">
+                {/* Column Header */}
+                <div className={`${config.bgColor} ${config.borderColor} rounded-lg border p-4`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className={config.color}>
+                        {config.icon}
                       </div>
+                      <h3 className={`font-semibold text-lg ${config.color}`}>
+                        {config.title}
+                      </h3>
+                    </div>
+                    <Badge 
+                      variant="secondary" 
+                      className={`${config.color} bg-white/50 dark:bg-black/50 font-semibold px-3 py-1`}
+                    >
+                      {statusTasks?.length || 0}
+                    </Badge>
+                  </div>
+                </div>
 
-                      {task?.description && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">{task?.description}</p>
-                      )}
-
-                      <div className="flex items-center justify-between text-xs">
-                        {task?.assignee ? (
-                          <div className="flex items-center space-x-1">
-                            <Avatar className="h-5 w-5">
-                              <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                                {getInitials(task?.assignee?.name || '')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-muted-foreground">{task?.assignee?.name}</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center space-x-1 text-muted-foreground">
-                            <User className="h-3 w-3" />
-                            <span>Unassigned</span>
-                          </div>
-                        )}
-
-                        {task?.dueDate && (
-                          <div className="flex items-center space-x-1 text-muted-foreground">
-                            <Calendar className="h-3 w-3" />
-                            <span>{formatDate(task?.dueDate)}</span>
-                          </div>
-                        )}
+                {/* Tasks List */}
+                <div className="space-y-3 min-h-[200px]">
+                  {statusTasks?.length === 0 ? (
+                    <div className="flex items-center justify-center h-32 text-muted-foreground">
+                      <div className="text-center">
+                        <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-muted flex items-center justify-center">
+                          {config.icon}
+                        </div>
+                        <p className="text-sm">No tasks</p>
                       </div>
                     </div>
-                  </Card>
-                ))}
-              </CardContent>
-            </Card>
-          ))}
+                  ) : (
+                    statusTasks?.map((task) => (
+                      <Card 
+                        key={task.id} 
+                        className="group hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 cursor-pointer border-0 shadow-sm bg-card/50 backdrop-blur-sm hover:scale-[1.02]"
+                      >
+                        <CardContent className="p-4">
+                          <div className="space-y-3">
+                            {/* Task Title */}
+                            <div className="flex items-start justify-between gap-2">
+                              <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 text-base">
+                                {task?.title}
+                              </h4>
+                              <Badge 
+                                variant={getStatusColor(task?.status) as any} 
+                                className="text-xs font-medium px-2 py-1 flex-shrink-0"
+                              >
+                                {task?.status?.replace("_", " ")}
+                              </Badge>
+                            </div>
+
+                            {/* Task Description */}
+                            {task?.description && (
+                              <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                                {task?.description}
+                              </p>
+                            )}
+
+                            {/* Task Meta */}
+                            <div className="flex items-center justify-between text-sm pt-2 border-t border-border/50">
+                              {/* Assignee */}
+                              <div className="flex items-center space-x-2">
+                                {task?.assignee ? (
+                                  <>
+                                    <Avatar className="h-6 w-6">
+                                      <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                                        {getInitials(task?.assignee?.name || '')}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-muted-foreground font-medium">
+                                      {task?.assignee?.name}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <div className="flex items-center space-x-2 text-muted-foreground">
+                                    <User className="h-4 w-4" />
+                                    <span className="text-sm">Unassigned</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Due Date */}
+                              {task?.dueDate && (
+                                <div className="flex items-center space-x-1 text-muted-foreground">
+                                  <Calendar className="h-4 w-4" />
+                                  <span className="text-sm font-medium">
+                                    {formatDate(task?.dueDate)}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
 
