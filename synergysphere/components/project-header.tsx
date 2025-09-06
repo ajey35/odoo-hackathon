@@ -28,6 +28,7 @@ interface Project {
   _count: {
     tasks: number
     teamMemberships: number
+    completedTasks?: number // <-- add this
   }
   createdAt: string
 }
@@ -49,8 +50,10 @@ export function ProjectHeader({ project, canManage, onProjectUpdated }: ProjectH
     })
   }
 
-  // Mock progress calculation
-  const progress = Math.floor(Math.random() * 100)
+  // Correct progress calculation
+  const progress = project._count.tasks
+    ? Math.round((project._count.completedTasks || 0) / project._count.tasks * 100)
+    : 0
 
   return (
     <div className="space-y-4">
