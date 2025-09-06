@@ -28,6 +28,7 @@ interface Project {
     role: string
   }>
   _count: {
+    completedTasks: number
     tasks: number
     teamMemberships: number
   }
@@ -73,7 +74,8 @@ export function ProjectsOverview() {
 
   const getProjectProgress = (project: Project) => {
     // Mock progress calculation - in real app, this would be based on completed tasks
-    return Math.floor(Math.random() * 100)
+    if (!project._count.tasks || project._count.tasks === 0) return 0
+  return Math.round((project?._count?.completedTasks / project._count.tasks) * 100)
   }
 
   if (loading) {  

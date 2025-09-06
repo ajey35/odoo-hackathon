@@ -18,9 +18,25 @@ export class ProjectController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      
+
       const result = await ProjectService.getProjects(req.user!.id, page, limit);
-      ApiResponseUtil.paginated(res, result.projects, result.meta, 'Projects retrieved successfully');
+
+      // Include completed tasks count for progress
+      const projectsWithProgress = await Promise.all(
+        result.projects.map(async (project) => {
+          const totalTasks = project._count.tasks;
+          const completedTasks = await ProjectService.countCompletedTasks(project.id);
+          return {
+            ...project,
+            _count: {
+              ...project._count,
+              completedTasks,
+            },
+          };
+        })
+      );
+
+      ApiResponseUtil.paginated(res, projectsWithProgress, result.meta, 'Projects retrieved successfully');
     } catch (error) {
       next(error);
     }
@@ -30,13 +46,23 @@ export class ProjectController {
     try {
       const { id } = req.params;
       const project = await ProjectService.getProject(id, req.user!.id);
-      
+
       if (!project) {
         ApiResponseUtil.error(res, 'Project not found', 404);
         return;
       }
 
-      ApiResponseUtil.success(res, project, 'Project retrieved successfully');
+      // Include completed tasks count for progress
+      const completedTasks = await ProjectService.countCompletedTasks(project.id);
+      const projectWithProgress = {
+        ...project,
+        _count: {
+          ...project._count,
+          completedTasks,
+        },
+      };
+
+      ApiResponseUtil.success(res, projectWithProgress, 'Project retrieved successfully');
     } catch (error) {
       next(error);
     }

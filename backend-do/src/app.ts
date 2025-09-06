@@ -21,6 +21,9 @@ import logger from './utils/logger';
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true }));
 
+  console.log('Environment:', process.env.DATABASE_URL);
+  
+
   // Request logging
   app.use((req, res, next) => {
     logger.info(`${req.method} ${req.url}`, {
