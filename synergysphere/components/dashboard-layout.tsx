@@ -155,7 +155,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
         {/* Top bar */}
         <div className="sticky top-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
           <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
