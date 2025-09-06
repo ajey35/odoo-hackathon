@@ -196,7 +196,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="w-full px-4 sm:px-6 lg:px-8 py-6 max-w-none">{children}</main>
+        <main className="w-full px-4 sm:px-6 lg:px-8 py-6 max-w-none full-width-container">{children}</main>
       </div>
 
       {/* User profile dialog */}

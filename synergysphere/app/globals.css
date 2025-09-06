@@ -125,3 +125,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .full-width-container {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  
+  .full-width-grid {
+    width: 100% !important;
+    max-width: none !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  }
+  
+  .no-container-constraints {
+    width: 100vw !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}

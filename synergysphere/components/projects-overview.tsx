@@ -41,20 +41,20 @@ export function ProjectsOverview() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
 
   const canCreateProject = user?.role === "ADMIN" || user?.role === "USER" // Assuming all users can create projects
-
+  
   useEffect(() => {
-    console.log("loading",loading);
-    
-    loadProjects()
-  }, [])
+    if (user) {
+      loadProjects()
+    }
+  }, [user]) // run when user logs in/out
 
   const loadProjects = async () => {
     try {
       const response = await projectsAPI.getProjects()
-      console.log("response",response);
-      
-      setProjects(response.data.projects)
-      console.log("projects",response.data.projects);
+      console.log("response projects", response);
+     
+      setProjects(response.data?.projects || [])
+      console.log("projects", response.data?.projects);
       
     } catch (error) {
       console.error("Failed to load projects:", error)
@@ -143,10 +143,10 @@ export function ProjectsOverview() {
           )}
         </div>
       ) : (
-        <div className="w-full grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="w-full grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 full-width-grid">
           {projects?.map((project) => {
             const progress = getProjectProgress(project)
-            const isOwner = project.owner.id === user?.id
+            const isOwner = project?.owner?.id === user?.id
 
             return (
               <Link key={project.id} href={`/dashboard/projects/${project.id}`}>
@@ -182,12 +182,12 @@ export function ProjectsOverview() {
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center space-x-1 text-muted-foreground">
                         <Users className="h-4 w-4" />
-                        <span className="font-medium">{project._count.teamMemberships}</span>
+                        <span className="font-medium">{project?._count?.teamMemberships || 0}</span>
                         <span className="text-xs">members</span>
                       </div>
                       <div className="flex items-center space-x-1 text-muted-foreground">
                         <BarChart3 className="h-4 w-4" />
-                        <span className="font-medium">{project._count.tasks}</span>
+                        <span className="font-medium">{project?._count?.tasks || 0}</span>
                         <span className="text-xs">tasks</span>
                       </div>
                     </div>
@@ -195,7 +195,7 @@ export function ProjectsOverview() {
                     {/* Created date */}
                     <div className="flex items-center space-x-1 text-xs text-muted-foreground pt-2 border-t border-border/50">
                       <Calendar className="h-3 w-3" />
-                      <span>Created {formatDate(project.createdAt)}</span>
+                      <span>Created {formatDate(project?.createdAt || '')}</span>
                     </div>
                   </CardContent>
                 </Card>
