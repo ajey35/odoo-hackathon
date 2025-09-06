@@ -106,61 +106,63 @@ export function ProjectsOverview() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Projects</h1>
-          <p className="text-muted-foreground">Manage and track your team projects</p>
+      <div className="w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold text-foreground">Projects</h1>
+            <p className="text-lg text-muted-foreground">Manage and track your team projects</p>
+          </div>
+          {canCreateProject && (
+            <Button onClick={() => setCreateDialogOpen(true)} className="w-full sm:w-auto h-12 text-base">
+              <Plus className="h-5 w-5 mr-2" />
+              New Project
+            </Button>
+          )}
         </div>
-        {canCreateProject && (
-          <Button onClick={() => setCreateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Project
-          </Button>
-        )}
       </div>
 
       {/* Projects Grid */}
       {projects?.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
-              <BarChart3 className="h-12 w-12 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">No projects yet</h3>
-            <p className="text-muted-foreground mb-4">
-              {canCreateProject
-                ? "Create your first project to start collaborating with your team."
-                : "You haven't been added to any projects yet."}
-            </p>
-            {canCreateProject && (
-              <Button onClick={() => setCreateDialogOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Project
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+        <div className="w-full bg-card/50 backdrop-blur-sm rounded-lg border p-16 text-center">
+          <div className="mx-auto w-32 h-32 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-6">
+            <BarChart3 className="h-16 w-16 text-primary" />
+          </div>
+          <h3 className="text-2xl font-semibold text-foreground mb-4">No projects yet</h3>
+          <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
+            {canCreateProject
+              ? "Create your first project to start collaborating with your team and boost productivity."
+              : "You haven't been added to any projects yet. Contact your team lead to get started."}
+          </p>
+          {canCreateProject && (
+            <Button onClick={() => setCreateDialogOpen(true)} size="lg" className="h-12 text-base">
+              <Plus className="h-5 w-5 mr-2" />
+              Create Your First Project
+            </Button>
+          )}
+        </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="w-full grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {projects?.map((project) => {
             const progress = getProjectProgress(project)
             const isOwner = project.owner.id === user?.id
 
             return (
               <Link key={project.id} href={`/dashboard/projects/${project.id}`}>
-                <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardHeader>
+                <Card className="group hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 cursor-pointer border-0 shadow-sm bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <CardTitle className="text-lg">{project.name}</CardTitle>
-                        <CardDescription className="line-clamp-2">
+                      <div className="space-y-2 flex-1 min-w-0">
+                        <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-1">
+                          {project.name}
+                        </CardTitle>
+                        <CardDescription className="line-clamp-2 text-sm">
                           {project.description || "No description provided"}
                         </CardDescription>
                       </div>
                       {isOwner && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs shrink-0 ml-2">
                           Owner
                         </Badge>
                       )}
@@ -170,26 +172,28 @@ export function ProjectsOverview() {
                     {/* Progress */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="font-medium">{progress}%</span>
+                        <span className="text-muted-foreground font-medium">Progress</span>
+                        <span className="font-semibold text-foreground">{progress}%</span>
                       </div>
-                      <Progress value={progress} className="h-2" />
+                      <Progress value={progress} className="h-2 bg-muted" />
                     </div>
 
                     {/* Stats */}
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <div className="flex items-center space-x-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center space-x-1 text-muted-foreground">
                         <Users className="h-4 w-4" />
-                        <span>{project._count.teamMemberships} members</span>
+                        <span className="font-medium">{project._count.teamMemberships}</span>
+                        <span className="text-xs">members</span>
                       </div>
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-1 text-muted-foreground">
                         <BarChart3 className="h-4 w-4" />
-                        <span>{project._count.tasks} tasks</span>
+                        <span className="font-medium">{project._count.tasks}</span>
+                        <span className="text-xs">tasks</span>
                       </div>
                     </div>
 
                     {/* Created date */}
-                    <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                    <div className="flex items-center space-x-1 text-xs text-muted-foreground pt-2 border-t border-border/50">
                       <Calendar className="h-3 w-3" />
                       <span>Created {formatDate(project.createdAt)}</span>
                     </div>

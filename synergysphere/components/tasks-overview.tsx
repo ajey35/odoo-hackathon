@@ -196,155 +196,163 @@ export function TasksOverview() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">My Tasks</h1>
-          <p className="text-muted-foreground">Track and manage your assigned tasks</p>
+      <div className="w-full">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold text-foreground">My Tasks</h1>
+          <p className="text-lg text-muted-foreground">Track and manage your assigned tasks</p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-5">
-        <Card>
+      <div className="w-full grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
           <CardHeader className="pb-2">
-            <CardDescription>Total Tasks</CardDescription>
+            <CardDescription className="text-blue-600 dark:text-blue-400 font-medium">Total Tasks</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{stats.total}</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.total}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950/20 dark:to-gray-900/20 border-gray-200 dark:border-gray-800">
           <CardHeader className="pb-2">
-            <CardDescription>To Do</CardDescription>
+            <CardDescription className="text-gray-600 dark:text-gray-400 font-medium">To Do</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-muted-foreground">{stats.todo}</div>
+            <div className="text-2xl font-bold text-gray-600 dark:text-gray-400">{stats.todo}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950/20 dark:to-yellow-900/20 border-yellow-200 dark:border-yellow-800">
           <CardHeader className="pb-2">
-            <CardDescription>In Progress</CardDescription>
+            <CardDescription className="text-yellow-600 dark:text-yellow-400 font-medium">In Progress</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-500">{stats.inProgress}</div>
+            <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.inProgress}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 border-green-200 dark:border-green-800">
           <CardHeader className="pb-2">
-            <CardDescription>Completed</CardDescription>
+            <CardDescription className="text-green-600 dark:text-gree n-400 font-medium">Completed</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-500">{stats.done}</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.done}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/20 dark:to-red-900/20 border-red-200 dark:border-red-800">
           <CardHeader className="pb-2">
-            <CardDescription>Overdue</CardDescription>
+            <CardDescription className="text-red-600 dark:text-red-400 font-medium">Overdue</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-500">{stats.overdue}</div>
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.overdue}</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search tasks..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
+      <div className="w-full bg-card/50 backdrop-blur-sm rounded-lg border p-6">
+        <div className="flex flex-col lg:flex-row gap-4 w-full">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search tasks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-12 text-base"
+            />
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 lg:flex-shrink-0">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-48 h-12">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="TODO">To Do</SelectItem>
+                <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                <SelectItem value="DONE">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full sm:w-48 h-12">
+                <SortAsc className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dueDate">Due Date</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+                <SelectItem value="project">Project</SelectItem>
+                <SelectItem value="created">Created</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-40">
-            <Filter className="h-4 w-4 mr-2" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="TODO">To Do</SelectItem>
-            <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-            <SelectItem value="DONE">Completed</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-full sm:w-40">
-            <SortAsc className="h-4 w-4 mr-2" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="dueDate">Due Date</SelectItem>
-            <SelectItem value="status">Status</SelectItem>
-            <SelectItem value="project">Project</SelectItem>
-            <SelectItem value="created">Created</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Tasks List */}
-      {filteredTasks?.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="h-12 w-12 text-muted-foreground" />
+      <div className="w-full">
+        {filteredTasks?.length === 0 ? (
+          <div className="w-full bg-card/50 backdrop-blur-sm rounded-lg border p-12 text-center">
+            <div className="mx-auto w-32 h-32 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full flex items-center justify-center mb-6">
+              <CheckCircle className="h-16 w-16 text-primary" />
             </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">
+            <h3 className="text-2xl font-semibold text-foreground mb-4">
               {searchQuery || statusFilter !== "all" ? "No tasks found" : "No tasks assigned"}
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-lg max-w-lg mx-auto">
               {searchQuery || statusFilter !== "all"
-                ? "Try adjusting your search or filters"
-                : "You don't have any tasks assigned yet"}
+                ? "Try adjusting your search or filters to find what you're looking for."
+                : "You don't have any tasks assigned yet. Check back later or ask your team lead for assignments."}
             </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {filteredTasks?.map((task) => (
-            <Card
-              key={task.id}
-              className="hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => handleTaskClick(task)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-start space-x-3">
-                      {getStatusIcon(task.status)}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-foreground truncate">{task.title}</h3>
-                        {task?.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{task.description}</p>
+          </div>
+        ) : (
+          <div className="w-full space-y-4">
+            {filteredTasks?.map((task) => (
+              <Card
+                key={task.id}
+                className="group hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 cursor-pointer border-0 shadow-sm bg-card/50 backdrop-blur-sm w-full"
+                onClick={() => handleTaskClick(task)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 space-y-3 min-w-0">
+                      <div className="flex items-start space-x-3">
+                        <div className="mt-1">
+                          {getStatusIcon(task.status)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1 text-lg">
+                            {task.title}
+                          </h3>
+                          {task?.description && (
+                            <p className="text-muted-foreground line-clamp-2 mt-2">{task.description}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <Badge variant="outline" className="text-xs font-medium px-3 py-1">
+                          {task?.project?.name}
+                        </Badge>
+                        <Badge variant={getStatusColor(task?.status) as any} className="text-xs font-medium px-3 py-1">
+                          {task?.status.replace("_", " ")}
+                        </Badge>
+                        {task?.dueDate && (
+                          <div className={`flex items-center space-x-1 text-sm font-medium ${getPriorityColor(task?.dueDate)}`}>
+                            <Calendar className="h-4 w-4" />
+                            <span>{formatDate(task?.dueDate)}</span>
+                          </div>
                         )}
                       </div>
                     </div>
-
-                    <div className="flex items-center space-x-4 text-sm">
-                      <Badge variant="outline" className="text-xs">
-                        {task?.project?.name}
-                      </Badge>
-                      <Badge variant={getStatusColor(task?.status) as any} className="text-xs">
-                        {task?.status.replace("_", " ")}
-                      </Badge>
-                      {task?.dueDate && (
-                        <div className={`flex items-center space-x-1 text-xs ${getPriorityColor(task?.dueDate)}`}>
-                          <Calendar className="h-3 w-3" />
-                          <span>{formatDate(task?.dueDate)}</span>
-                        </div>
-                      )}
-                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Task Detail Dialog */}
       {selectedTask && (
