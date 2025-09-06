@@ -43,13 +43,19 @@ export function ProjectsOverview() {
   const canCreateProject = user?.role === "ADMIN" || user?.role === "USER" // Assuming all users can create projects
 
   useEffect(() => {
+    console.log("loading",loading);
+    
     loadProjects()
   }, [])
 
   const loadProjects = async () => {
     try {
       const response = await projectsAPI.getProjects()
+      console.log("response",response);
+      
       setProjects(response.data.projects)
+      console.log("projects",response.data.projects);
+      
     } catch (error) {
       console.error("Failed to load projects:", error)
     } finally {
@@ -70,7 +76,7 @@ export function ProjectsOverview() {
     return Math.floor(Math.random() * 100)
   }
 
-  if (loading) {
+  if (loading) {  
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -116,7 +122,7 @@ export function ProjectsOverview() {
       </div>
 
       {/* Projects Grid */}
-      {projects.length === 0 ? (
+      {projects?.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
             <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
@@ -138,7 +144,7 @@ export function ProjectsOverview() {
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => {
+          {projects?.map((project) => {
             const progress = getProjectProgress(project)
             const isOwner = project.owner.id === user?.id
 

@@ -26,6 +26,9 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
+      console.log("email",email);
+      console.log("password",password);
+      
       await login(email, password)
     } catch (err: any) {
       setError(err.message || "Login failed")

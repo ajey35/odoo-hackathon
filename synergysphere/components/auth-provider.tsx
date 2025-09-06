@@ -37,7 +37,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const expiry = Number.parseInt(tokenExpiry)
 
       if (now < expiry) {
-        setUser(JSON.parse(userData))
+        try {
+          const parsedUser: User = JSON.parse(userData)
+          setUser(parsedUser)
+        } catch (e) {
+          setUser(null)
+          localStorage.removeItem("synergy_user")
+        }
       } else {
         // Token expired, clear storage
         localStorage.removeItem("synergy_token")
@@ -57,14 +63,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
         body: JSON.stringify({ email, password }),
       })
-
+      console.log("response",response);
+      
       const data = await response.json()
-
+      console.log("data",data);
+      
       if (!response.ok) {
         throw new Error(data.message || "Login failed")
       }
 
       const { user: userData, accessToken } = data.data
+      console.log("userData:", userData)
+      console.log("accessToken:", accessToken)
+      
       const expiryTime = new Date().getTime() + 60 * 60 * 1000 // 1 hour
 
       // Store in localStorage
@@ -72,7 +83,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("synergy_user", JSON.stringify(userData))
       localStorage.setItem("synergy_token_expiry", expiryTime.toString())
 
+      console.log("Setting user state:", userData)
       setUser(userData)
+      console.log("Navigating to dashboard...")                                                                                             
       router.push("/dashboard")
     } catch (error) {
       throw error

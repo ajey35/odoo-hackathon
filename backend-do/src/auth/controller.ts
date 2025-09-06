@@ -7,8 +7,8 @@ export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { name, email, password } = req.body;
-      const tokens = await AuthService.register(name, email, password);
-      ApiResponseUtil.success(res, tokens, 'Registration successful', 201);
+      const { tokens, user } = await AuthService.register(name, email, password);
+      ApiResponseUtil.success(res, { ...tokens, user }, 'Registration successful', 201);
     } catch (error: any) {
       if (error.message === 'User already exists') {
         ApiResponseUtil.error(res, error.message, 409);
@@ -21,8 +21,8 @@ export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
-      const tokens = await AuthService.login(email, password);
-      ApiResponseUtil.success(res, tokens, 'Login successful');
+      const { tokens, user } = await AuthService.login(email, password);
+      ApiResponseUtil.success(res, { ...tokens, user }, 'Login successful');
     } catch (error: any) {
       if (error.message === 'Invalid credentials') {
         ApiResponseUtil.error(res, error.message, 401);

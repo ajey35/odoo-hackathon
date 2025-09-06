@@ -10,8 +10,13 @@ export default function DashboardPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
+  console.log("Dashboard - user:", user)
+  console.log("Dashboard - loading:", loading)
+
   useEffect(() => {
+    console.log("Dashboard useEffect - user:", user, "loading:", loading)
     if (!loading && !user) {
+      console.log("No user found, redirecting to login")
       router.push("/login")
     }
   }, [user, loading, router])

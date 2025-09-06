@@ -4,7 +4,7 @@ import { JWTUtil } from '../utils/jwt';
 import { AuthTokens, JWTPayload } from '../types';
 
 export class AuthService {
-  static async register(name: string, email: string, password: string): Promise<AuthTokens> {
+  static async register(name: string, email: string, password: string): Promise<{ tokens: AuthTokens; user: any }> {
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -29,10 +29,20 @@ export class AuthService {
       role: user.role,
     };
 
-    return JWTUtil.generateTokens(payload);
+    const tokens = JWTUtil.generateTokens(payload);
+    
+    return {
+      tokens,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }
+    };
   }
 
-  static async login(email: string, password: string): Promise<AuthTokens> {
+  static async login(email: string, password: string): Promise<{ tokens: AuthTokens; user: any }> {
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -53,7 +63,17 @@ export class AuthService {
       role: user.role,
     };
 
-    return JWTUtil.generateTokens(payload);
+    const tokens = JWTUtil.generateTokens(payload);
+    
+    return {
+      tokens,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }
+    };
   }
 
   static async refreshToken(refreshToken: string): Promise<AuthTokens> {

@@ -59,7 +59,7 @@ export function TasksOverview() {
   }
 
   const filterAndSortTasks = () => {
-    let filtered = [...tasks]
+    let filtered = [...(tasks || [])]
 
     // Apply search filter
     if (searchQuery) {
@@ -150,11 +150,11 @@ export function TasksOverview() {
   }
 
   const getTaskStats = () => {
-    const total = tasks.length
-    const todo = tasks.filter((t) => t.status === "TODO").length
-    const inProgress = tasks.filter((t) => t.status === "IN_PROGRESS").length
-    const done = tasks.filter((t) => t.status === "DONE").length
-    const overdue = tasks.filter((t) => t.dueDate && new Date(t.dueDate) < new Date()).length
+    const total = tasks?.length
+    const todo = tasks?.filter((t) => t.status === "TODO").length
+    const inProgress = tasks?.filter((t) => t.status === "IN_PROGRESS").length
+    const done = tasks?.filter((t) => t.status === "DONE").length
+    const overdue = tasks?.filter((t) => t.dueDate && new Date(t.dueDate) < new Date()).length
 
     return { total, todo, inProgress, done, overdue }
   }
@@ -287,7 +287,7 @@ export function TasksOverview() {
       </div>
 
       {/* Tasks List */}
-      {filteredTasks.length === 0 ? (
+      {filteredTasks?.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
             <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
@@ -305,7 +305,7 @@ export function TasksOverview() {
         </Card>
       ) : (
         <div className="space-y-3">
-          {filteredTasks.map((task) => (
+          {filteredTasks?.map((task) => (
             <Card
               key={task.id}
               className="hover:shadow-md transition-shadow cursor-pointer"
@@ -318,7 +318,7 @@ export function TasksOverview() {
                       {getStatusIcon(task.status)}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-foreground truncate">{task.title}</h3>
-                        {task.description && (
+                        {task?.description && (
                           <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{task.description}</p>
                         )}
                       </div>
@@ -326,15 +326,15 @@ export function TasksOverview() {
 
                     <div className="flex items-center space-x-4 text-sm">
                       <Badge variant="outline" className="text-xs">
-                        {task.project.name}
+                        {task?.project?.name}
                       </Badge>
-                      <Badge variant={getStatusColor(task.status) as any} className="text-xs">
-                        {task.status.replace("_", " ")}
+                      <Badge variant={getStatusColor(task?.status) as any} className="text-xs">
+                        {task?.status.replace("_", " ")}
                       </Badge>
-                      {task.dueDate && (
-                        <div className={`flex items-center space-x-1 text-xs ${getPriorityColor(task.dueDate)}`}>
+                      {task?.dueDate && (
+                        <div className={`flex items-center space-x-1 text-xs ${getPriorityColor(task?.dueDate)}`}>
                           <Calendar className="h-3 w-3" />
-                          <span>{formatDate(task.dueDate)}</span>
+                          <span>{formatDate(task?.dueDate)}</span>
                         </div>
                       )}
                     </div>
