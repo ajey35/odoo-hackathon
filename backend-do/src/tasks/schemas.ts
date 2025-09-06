@@ -5,8 +5,8 @@ export const createTaskSchema = z.object({
     title: z.string().min(1, 'Task title is required'),
     description: z.string().optional(),
     projectId: z.string().cuid('Invalid project ID'),
-    assignedTo: z.string().cuid('Invalid user ID').optional(),
-    dueDate: z.string().datetime().optional(),
+    assignedTo: z.string().optional(),
+    dueDate: z.string().optional(),
   }),
 });
 
@@ -15,8 +15,8 @@ export const updateTaskSchema = z.object({
     title: z.string().min(1, 'Task title is required').optional(),
     description: z.string().optional(),
     status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
-    assignedTo: z.string().cuid('Invalid user ID').optional(),
-    dueDate: z.string().datetime().optional(),
+    assignedTo: z.string().optional(),
+    dueDate: z.string().optional(),
   }),
   params: z.object({
     id: z.string().cuid('Invalid task ID'),
