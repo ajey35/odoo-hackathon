@@ -44,7 +44,9 @@ export function CreateTaskDialog({ projectId, open, onOpenChange, onTaskCreated 
   const loadTeamMembers = async () => {
     try {
       const response = await projectsAPI.getProject(projectId)
-      setTeamMembers(response.data.teamMemberships)
+      console.log("Project response:", response)
+      const members = response?.data?.teamMemberships || response?.teamMemberships || []
+      setTeamMembers(members)
     } catch (error) {
       console.error("Failed to load team members:", error)
     }
@@ -56,16 +58,28 @@ export function CreateTaskDialog({ projectId, open, onOpenChange, onTaskCreated 
     setLoading(true)
 
     try {
-      await tasksAPI.createTask({
+      console.log("Creating task with data:", {
+        title: title.trim(),
+        description: description.trim() || undefined,
+        projectId: projectId,
+        assignedTo: assignedTo && assignedTo !== "unassigned" ? assignedTo : undefined,
+        dueDate: dueDate || undefined,
+      })
+      console.log("Project ID being used:", projectId)
+      
+      const response = await tasksAPI.createTask({
         title: title.trim(),
         description: description.trim() || undefined,
         projectId,
-        assignedTo: assignedTo || undefined,
+        assignedTo: assignedTo && assignedTo !== "unassigned" ? assignedTo : undefined,
         dueDate: dueDate || undefined,
       })
+      
+      console.log("Task creation response:", response)
       onTaskCreated()
       handleClose()
     } catch (err: any) {
+      console.error("Task creation error:", err)
       setError(err.message || "Failed to create task")
     } finally {
       setLoading(false)

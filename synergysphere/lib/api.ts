@@ -1,3 +1,4 @@
+
 // API utility functions for SynergySphere
 const API_BASE_URL = "http://localhost:3000/api/v1"
 
@@ -9,18 +10,45 @@ function getAuthHeaders() {
   }
 }
 
+export function isAuthenticated() {
+  const token = localStorage.getItem("synergy_token")
+  const tokenExpiry = localStorage.getItem("synergy_token_expiry")
+  
+  if (!token || !tokenExpiry) {
+    return false
+  }
+  
+  const now = new Date().getTime()
+  const expiry = Number.parseInt(tokenExpiry)
+  
+  return now < expiry
+}
+
+export function getAuthToken() {
+  return localStorage.getItem("synergy_token")
+}
+
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`
+  const headers = {
+    ...getAuthHeaders(),
+    ...options.headers,
+  }
+
+  console.log(`Making API request to: ${url}`)
+  console.log('Request headers:', headers)
+  console.log('Request body:', options.body)
 
   const response = await fetch(url, {
     ...options,
-    headers: {
-      ...getAuthHeaders(),
-      ...options.headers,
-    },
+    headers,
   })
 
+  console.log('Response status:', response.status)
+  console.log('Response headers:', Object.fromEntries(response.headers.entries()))
+
   const data = await response.json()
+  console.log('Response data:', data)
 
   if (!response.ok) {
     throw new Error(data.message || "API request failed")
@@ -112,11 +140,13 @@ export const tasksAPI = {
     projectId: string
     assignedTo?: string
     dueDate?: string
-  }) =>
-    apiRequest("/tasks", {
+  }) => {
+    console.log("data in task", data);
+    return apiRequest("/tasks", {
       method: "POST",
       body: JSON.stringify(data),
-    }),
+    });
+  },
 
   updateTask: (
     id: string,

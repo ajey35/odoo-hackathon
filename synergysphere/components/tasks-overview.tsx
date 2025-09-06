@@ -50,7 +50,7 @@ export function TasksOverview() {
   const loadTasks = async () => {
     try {
       const response = await tasksAPI.getTasks({ assignedTo: user?.id })
-      setTasks(response.data.tasks)
+      setTasks(response?.data)
     } catch (error) {
       console.error("Failed to load tasks:", error)
     } finally {

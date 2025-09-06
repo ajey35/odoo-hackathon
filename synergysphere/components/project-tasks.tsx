@@ -33,14 +33,23 @@ export function ProjectTasks({ projectId, canManage }: ProjectTasksProps) {
   const [loading, setLoading] = useState(true)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
 
+  console.log("ProjectTasks received projectId:", projectId)
+
   useEffect(() => {
     loadTasks()
   }, [projectId])
 
   const loadTasks = async () => {
     try {
+      console.log("Loading tasks for project:", projectId);
+      
       const response = await tasksAPI.getTasks({ projectId })
-      setTasks(response.data?.tasks || [])
+      console.log("Tasks API response:", response);
+      
+      const tasks =  response?.data || []
+      console.log("Extracted tasks:", tasks);
+      
+      setTasks(tasks)
     } catch (error) {
       console.error("Failed to load tasks:", error)
     } finally {
