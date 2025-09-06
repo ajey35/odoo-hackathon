@@ -53,7 +53,7 @@ export function ProjectsOverview() {
       const response = await projectsAPI.getProjects()
       console.log("response projects", response);
      
-      setProjects(response.data?.projects || [])
+      setProjects(response.data || [])
       console.log("projects", response.data?.projects);
       
     } catch (error) {
