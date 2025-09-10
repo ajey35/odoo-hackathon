@@ -166,7 +166,7 @@ export const tasksAPI = {
   deleteTask: (id: string) => apiRequest(`/tasks/${id}`, { method: "DELETE" }),
 }
 
-// Notifications API functions
+/*// Notifications API functions
 export const notificationsAPI = {
   getNotifications: (filters?: { read?: boolean; page?: number; limit?: number }) => {
     const params = new URLSearchParams()
@@ -189,4 +189,54 @@ export const notificationsAPI = {
     apiRequest("/notifications/mark-all-read", {
       method: "PUT",
     }),
+}
+*/
+/*// frontend/lib/notifications.ts
+
+export const notificationsAPI = {
+  getNotifications: (filters?: { read?: boolean; page?: number; limit?: number }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) {
+          params.append(key, value.toString());
+        }
+      });
+    }
+
+    return apiRequest(`/notifications?${params.toString()}`);
+  },
+
+  markAsRead: (notificationId: string) =>
+    apiRequest(`/notifications/${notificationId}/read`, {
+      method: "PUT",
+    }),
+
+  markAllAsRead: () =>
+    apiRequest("/notifications/mark-all-read", {
+      method: "PUT",
+    }),
+};
+*/
+
+// lib/notifications.ts
+
+// lib/api.ts (add this below your existing apiRequest function)
+
+export const notificationsAPI = {
+  getNotifications: (filters?: { read?: boolean; page?: number; limit?: number }) => {
+    const params = new URLSearchParams()
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) params.append(key, value.toString())
+      })
+    }
+    return apiRequest(`/notifications?${params.toString()}`)
+  },
+
+  markAsRead: (notificationId: string) =>
+    apiRequest(`/notifications/${notificationId}/read`, { method: "PUT" }),
+
+  markAllAsRead: () =>
+    apiRequest("/notifications/mark-all-read", { method: "PUT" }),
 }
