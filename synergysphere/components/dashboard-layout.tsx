@@ -34,15 +34,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     return () => clearInterval(interval)
   }, [])
 
-  /*const loadNotificationCount = async () => {
-    try {
-      const response = await notificationsAPI.getNotifications({ read: false, limit: 1 })
-      setUnreadCount(response.data.meta?.total || 0)
-    } catch (error) {
-      // Fallback to mock count if API fails
-      setUnreadCount(3)
-    }
-  }*/
   const loadNotificationCount = async () => {
   try {
     const response = await notificationsAPI.getNotifications({ read: false, limit: 1 })
