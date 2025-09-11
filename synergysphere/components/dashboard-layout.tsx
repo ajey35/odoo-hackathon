@@ -35,14 +35,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const loadNotificationCount = async () => {
-    try {
-      const response = await notificationsAPI.getNotifications({ read: false, limit: 1 })
-      setUnreadCount(response.data.meta?.total || 0)
-    } catch (error) {
-      // Fallback to mock count if API fails
-      setUnreadCount(3)
-    }
+  try {
+    const response = await notificationsAPI.getNotifications({ read: false, limit: 1 })
+    // Adjust based on your backend response structure
+    const totalUnread = response.data?.meta?.total || response.meta?.total || response.total || 0
+    setUnreadCount(totalUnread)
+  } catch (error) {
+    console.error("Failed to load notifications:", error)
+    setUnreadCount(0) // set to 0 instead of 3
   }
+}
+
 
   const navigation = [
     {

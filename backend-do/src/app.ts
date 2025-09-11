@@ -6,6 +6,7 @@ import authRoutes from './auth/routes';
 import projectRoutes from './projects/routes';
 import taskRoutes from './tasks/routes';
 import logger from './utils/logger';
+import notificationRoutes from "./notifications/routes";
 
 // export function createApp() {
   const app = express();
@@ -46,6 +47,7 @@ import logger from './utils/logger';
   app.use('/api/v1/auth', authRoutes);
   app.use('/api/v1/projects', projectRoutes);
   app.use('/api/v1/tasks', taskRoutes);
+  app.use("/api/v1/notifications", notificationRoutes);
 
   // 404 handler
   app.use('*', (req, res) => {

@@ -27,57 +27,34 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
   const [markingAsRead, setMarkingAsRead] = useState<string | null>(null)
   const [markingAllAsRead, setMarkingAllAsRead] = useState(false)
 
+  // Load notifications on mount
   useEffect(() => {
     loadNotifications()
   }, [])
 
   const loadNotifications = async () => {
     try {
-      const response = await notificationsAPI.getNotifications({ limit: 20 })
-      setNotifications(response.data.notifications)
+      const response = await notificationsAPI.getNotifications({ limit: 50 })
+      setNotifications(response.notifications)
     } catch (error) {
       console.error("Failed to load notifications:", error)
-      // Fallback to mock data if API fails
-      setNotifications([
-        {
-          id: "1",
-          type: "TASK_ASSIGNED",
-          message: "You have been assigned a new task: 'Update user interface' in project 'Website Redesign'",
-          read: false,
-          createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
-        },
-        {
-          id: "2",
-          type: "PROJECT_INVITATION",
-          message: "You have been added to project 'Mobile App Development'",
-          read: false,
-          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        },
-        {
-          id: "3",
-          type: "DEADLINE_APPROACHING",
-          message: "Task 'API Integration' is due in 2 days",
-          read: true,
-          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-        },
-      ])
+      setNotifications([])
     } finally {
       setLoading(false)
     }
   }
 
-  const filteredNotifications = notifications.filter((notification) =>
-    notification.message.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredNotifications = notifications.filter((n) =>
+    n.message.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const markAsRead = async (id: string) => {
     if (markingAsRead) return
-
     setMarkingAsRead(id)
     try {
       await notificationsAPI.markAsRead(id)
       setNotifications((prev) =>
-        prev.map((notification) => (notification.id === id ? { ...notification, read: true } : notification)),
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
       )
     } catch (error) {
       console.error("Failed to mark notification as read:", error)
@@ -88,11 +65,10 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
 
   const markAllAsRead = async () => {
     if (markingAllAsRead) return
-
     setMarkingAllAsRead(true)
     try {
       await notificationsAPI.markAllAsRead()
-      setNotifications((prev) => prev.map((notification) => ({ ...notification, read: true })))
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
     } catch (error) {
       console.error("Failed to mark all notifications as read:", error)
     } finally {
@@ -101,34 +77,21 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
   }
 
   const formatTime = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
-
-    if (diffInMinutes < 1) return "Just now"
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
-
-    const diffInHours = Math.floor(diffInMinutes / 60)
-    if (diffInHours < 24) return `${diffInHours}h ago`
-
-    const diffInDays = Math.floor(diffInHours / 24)
-    return `${diffInDays}d ago`
+    const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000 / 60)
+    if (diff < 1) return "Just now"
+    if (diff < 60) return `${diff}m ago`
+    if (diff < 60 * 24) return `${Math.floor(diff / 60)}h ago`
+    return `${Math.floor(diff / (60 * 24))}d ago`
   }
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case "TASK_ASSIGNED":
-        return "📋"
-      case "TASK_UPDATED":
-        return "✏️"
-      case "PROJECT_INVITATION":
-        return "👥"
-      case "DEADLINE_APPROACHING":
-        return "⏰"
-      case "NEW_MESSAGE":
-        return "💬"
-      default:
-        return "📢"
+      case "TASK_ASSIGNED": return "📋"
+      case "TASK_UPDATED": return "✏️"
+      case "PROJECT_INVITATION": return "👥"
+      case "DEADLINE_APPROACHING": return "⏰"
+      case "NEW_MESSAGE": return "💬"
+      default: return "📢"
     }
   }
 
@@ -141,27 +104,18 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
           <CardTitle className="text-lg flex items-center space-x-2">
             <Bell className="h-5 w-5" />
             <span>Notifications</span>
-            {unreadCount > 0 && (
-              <Badge variant="secondary" className="text-xs">
-                {unreadCount}
-              </Badge>
-            )}
+            {unreadCount > 0 && <Badge variant="secondary" className="text-xs">{unreadCount}</Badge>}
           </CardTitle>
           <div className="flex items-center space-x-2">
             <Button variant="ghost" size="sm" onClick={markAllAsRead} disabled={markingAllAsRead || unreadCount === 0}>
-              {markingAllAsRead ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
-              ) : (
-                <Check className="h-4 w-4 mr-1" />
-              )}
+              {markingAllAsRead ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Check className="h-4 w-4 mr-1" />}
               Mark all read
             </Button>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
+            <Button variant="ghost" size="sm" onClick={onClose}><X className="h-4 w-4" /></Button>
           </div>
         </div>
-        <div className="relative">
+
+        <div className="relative mt-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search notifications..."
@@ -171,6 +125,7 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
           />
         </div>
       </CardHeader>
+
       <CardContent className="p-0">
         <ScrollArea className="h-80">
           {loading ? (
@@ -184,43 +139,25 @@ export function NotificationsPanel({ onClose }: NotificationsPanelProps) {
                   {searchQuery ? "No notifications found" : "No notifications"}
                 </div>
               ) : (
-                filteredNotifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className={`p-3 rounded-lg border transition-colors ${
-                      notification.read ? "bg-muted/30 border-border/50" : "bg-card border-border hover:bg-muted/50"
-                    }`}
-                  >
+                filteredNotifications.map((n) => (
+                  <div key={n.id} className={`p-3 rounded-lg border transition-colors ${n.read ? "bg-muted/30 border-border/50" : "bg-card border-border hover:bg-muted/50"}`}>
                     <div className="flex items-start space-x-3">
-                      <div className="text-lg flex-shrink-0">{getNotificationIcon(notification.type)}</div>
+                      <div className="text-lg flex-shrink-0">{getNotificationIcon(n.type)}</div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm ${notification.read ? "text-muted-foreground" : "text-foreground"}`}>
-                          {notification.message}
-                        </p>
+                        <p className={`text-sm ${n.read ? "text-muted-foreground" : "text-foreground"}`}>{n.message}</p>
                         <div className="flex items-center justify-between mt-1">
-                          <span className="text-xs text-muted-foreground">{formatTime(notification.createdAt)}</span>
-                          <div className="flex items-center space-x-2">
-                            {!notification.read && (
-                              <>
-                                <Badge variant="secondary" className="h-5 px-2 text-xs">
-                                  New
-                                </Badge>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-6 px-2 text-xs"
-                                  onClick={() => markAsRead(notification.id)}
-                                  disabled={markingAsRead === notification.id}
-                                >
-                                  {markingAsRead === notification.id ? (
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                  ) : (
-                                    "Mark read"
-                                  )}
-                                </Button>
-                              </>
-                            )}
-                          </div>
+                          <span className="text-xs text-muted-foreground">{formatTime(n.createdAt)}</span>
+                          {!n.read && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-2 text-xs"
+                              onClick={() => markAsRead(n.id)}
+                              disabled={markingAsRead === n.id}
+                            >
+                              {markingAsRead === n.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Mark read"}
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
